@@ -21,10 +21,27 @@ import { Tag } from './entity/tag';
       type: 'sqljs',
       synchronize: true,
       logging: false,
-      autoSave: true,
+      autoSave: false,
       location: './database/my.sqlite',
       entities: [Gallery, Tag],
     }),
+
+    // TypeOrmModule.forRoot({
+    //   type: 'sqlite',
+    //   synchronize: false,
+    //   logging: false,
+    //   database: './database/eh_api_db.sqlite',
+    //   entities: [GalleryOriginal],
+    //   name: 'eh_api_db',
+    // }),
+    // TypeOrmModule.forRoot({
+    //   type: 'sqlite',
+    //   synchronize: true,
+    //   logging: false,
+    //   database: './database/my.sqlite',
+    //   entities: [Gallery, Tag],
+    // }),
+
     TypeOrmModule.forFeature([GalleryOriginal], 'eh_api_db'),
     TypeOrmModule.forFeature([Gallery, Tag]),
   ],

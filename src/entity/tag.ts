@@ -2,17 +2,17 @@ import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Gallery } from './gallery';
 
 export enum TagNamespace {
-  none = 0,
+  rest = 0,
   artist = 1,
   character = 2,
   female = 3,
   male = 4,
   language = 5,
   reclass = 6,
-  rest = 7,
+  group = 7,
 }
 
-export const TagNamespaceName = ['', 'artist', 'character', 'female', 'male', 'language', 'reclass', 'rest'];
+export const TagNamespaceName = ['rest', 'artist', 'character', 'female', 'male', 'language', 'reclass', 'group'];
 
 @Entity({name: 'tag'})
 export class Tag {
@@ -32,6 +32,6 @@ export class Tag {
   remark: string;
 
   @ManyToMany(type => Gallery, gallery => gallery.tags)
-  galleries: Gallery[];
+  galleries?: Gallery[];
 
 }

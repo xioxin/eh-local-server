@@ -50,7 +50,7 @@ export class Gallery {
 
   @ManyToMany(type => Tag, tag => tag.galleries)
   @JoinTable()
-  tags: Tag[];
+  tags?: Tag[];
 
   @Column({name: 'url_ex', type: 'varchar', length: 255, default: '', nullable: true})
   urlEx: string;

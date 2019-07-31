@@ -11,7 +11,11 @@ export const textToJsonArr: ValueTransformer = {
   from: (value: string) => {
     try {
       // tslint:disable-next-line:no-eval
-      return value ? eval(value) : [];
+      let v = value ? eval(value) : [];
+      if (!Array.isArray(v)) {
+        v = [v];
+      }
+      return v;
     } catch (e) {
       return [];
     }
