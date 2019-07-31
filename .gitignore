@@ -6,7 +6,7 @@
 /database
 
 /*.lock
-
+/*-lock
 # Logs
 logs
 *.log
