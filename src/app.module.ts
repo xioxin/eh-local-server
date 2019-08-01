@@ -5,6 +5,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Gallery } from './entity/gallery';
 import { GalleryOriginal } from './entity/gallery-original';
 import { Tag } from './entity/tag';
+import { GraphQLModule } from '@nestjs/graphql';
+import { QueryRunner } from 'typeorm';
 
 @Module({
   imports: [
@@ -17,13 +19,35 @@ import { Tag } from './entity/tag';
       entities: [GalleryOriginal],
       name: 'eh_api_db',
     }),
+    // TypeOrmModule.forRoot({
+    //   type: 'sqljs',
+    //   synchronize: true,
+    //   logging: false,
+    //   autoSave: false,
+    //   location: './database/my.sqlite',
+    //   entities: [Gallery, Tag],
+    // }),
+
     TypeOrmModule.forRoot({
-      type: 'sqljs',
+      type: 'postgres',
       synchronize: true,
-      logging: false,
-      autoSave: false,
-      location: './database/my.sqlite',
+      host: '127.0.0.1',
+      port: 5432,
+      username: 'postgres',
+      password: '',
+      database: 'postgres',
       entities: [Gallery, Tag],
+      logger: 'advanced-console',
+      logging: true,
+
+      // logger: {
+      //   logQuery: (a, b) => console.log(a, b),
+      //   logQueryError: (a, b) => console.log(a, b),
+      //   logQuerySlow: (a, b) => console.log(a, b),
+      //   logSchemaBuild: (a, b) => console.log(a, b),
+      //   logMigration: (a, b) => console.log(a, b),
+      //   log: (a, b) => console.log(a, b),
+      // },
     }),
 
     // TypeOrmModule.forRoot({
@@ -44,6 +68,12 @@ import { Tag } from './entity/tag';
 
     TypeOrmModule.forFeature([GalleryOriginal], 'eh_api_db'),
     TypeOrmModule.forFeature([Gallery, Tag]),
+
+    // GraphQLModule.forRoot({
+    //   typePaths: ['./**/*.graphql'],
+    //   autoSchemaFile: 'schema.gql',
+    // }),
+
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -25,8 +25,8 @@ export class Tag {
   @Column({type: 'varchar', length: 255, default: '', nullable: true})
   name: string;
 
-  @Column({type: 'varchar', length: 255, default: '', nullable: true})
-  nameJpa: string;
+  @Column({name: 'name_jpn', type: 'varchar', length: 255, default: '', nullable: true})
+  nameJpn: string;
 
   @Column({type: 'varchar', length: 255, default: '', nullable: true})
   remark: string;
