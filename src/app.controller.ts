@@ -11,6 +11,8 @@ interface SearchBody {
   excludeTags?: number[];
   category?: string[];
   keyword?: string;
+  pageSize?: number;
+  page?: number;
 }
 
 @Controller()
@@ -52,7 +54,10 @@ export class AppController {
   @Post('search')
   async search(@Body() body: SearchBody): Promise<any> {
 
-    console.time('timer');
+    let page = body.page || 1;
+    const pageSize = body.pageSize || 50;
+
+    if (page < 1) { page = 1; }
 
     const query = this.GalleryRepository.createQueryBuilder('gallery');
 
@@ -72,9 +77,9 @@ export class AppController {
     if (body.keyword && body.keyword.length) {
       query.andWhere('("title" LIKE :keyword OR "title_jpn" LIKE :keyword)', {keyword: `%${body.keyword}%`});
     }
-    query.printSql().limit(100).orderBy('posted', 'DESC')
+    query.printSql().limit(pageSize).offset(pageSize * (page - 1)).orderBy('posted', 'DESC');
 
-    const gallerys = await query.getMany();
+    const [gallerys, count] = await query.getManyAndCount();
     const tagIds = [];
     gallerys.forEach(v => tagIds.push(...v.tags));
     const tagList = await this.TagRepository.findByIds(tagIds);
@@ -82,15 +87,44 @@ export class AppController {
     tagList.forEach(tag => tagMap[tag.id] = tag);
     gallerys.forEach(g => {
       g.tags = g.tags.map(id => tagMap[id]);
-    })
-
-    console.timeEnd('timer');
+    });
 
     return {
       statusCode: 0,
       message: 'ok',
-      data: gallerys,
+      data: {
+        count,
+        current: page,
+        pageSize,
+        pageCount: Math.ceil(count / pageSize),
+        list: gallerys,
+      },
     };
+  }
+
+  @Post('tagTips')
+  async tagTips(@Body() body: {keyword: string}): Promise<any> {
+
+    let tagList = [];
+    let count = 0;
+    if (body.keyword) {
+      [tagList, count] = await this.TagRepository
+        .createQueryBuilder()
+        .where('("name" LIKE :keyword OR "name_jpn" LIKE :keyword)', {keyword: `%${body.keyword}%`})
+        .limit(20)
+        .getManyAndCount();
+    }
+
+    return  {
+      statusCode: 0,
+      message: 'ok',
+      data: {
+        count,
+        list: tagList,
+        namespace: TagNamespaceName,
+      },
+    };
+
   }
 
 /*
